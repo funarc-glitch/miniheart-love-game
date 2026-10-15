@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff0f6">
+  <title>For My Patootie 💗</title>
+
+  <style>
+    /* =====================================================
+       VISUAL SETTINGS — SAFE TO CUSTOMISE
+       Change these colours to give the game a new palette.
+       ===================================================== */
+    :root {
+      --pink: #ff78a7;
+      --pink-dark: #d94378;
+      --pink-deep: #ad315f;
+      --pink-light: #fff0f6;
+      --pink-pale: #fff8fb;
+      --rose: #ffd6e5;
+      --text: #62354a;
+      --muted: #a56c84;
+      --white: #ffffff;
+      --shadow: 0 18px 45px rgba(185, 69, 113, 0.13);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: max(16px, env(safe-area-inset-top)) 15px max(18px, env(safe-area-inset-bottom));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-family: ui-rounded, "Trebuchet MS", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(circle at 12% 13%, rgba(255,255,255,.95) 0 3px, transparent 4px),
+        radial-gradient(circle at 86% 22%, rgba(255,255,255,.9) 0 4px, transparent 5px),
+        radial-gradient(circle at 18% 83%, rgba(255,255,255,.8) 0 3px, transparent 4px),
+        linear-gradient(145deg, #fff5f9 0%, #ffe2ed 48%, #fff0f6 100%);
+      overflow-x: hidden;
+    }
+
+    button { font: inherit; }
+    button:focus-visible { outline: 3px solid #9b3f68; outline-offset: 3px; }
+
+    .app-shell {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin: 0 3px 12px;
+    }
+
+    .brand {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--pink-deep);
+    }
+
+    .sound-toggle {
+      border: 1px solid rgba(217,67,120,.16);
+      color: var(--pink-deep);
+      background: rgba(255,255,255,.72);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .game-card {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      min-height: 520px;
+      padding: 28px 22px 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.92);
+      border-radius: 30px;
+      background: rgba(255,255,255,.91);
+      box-shadow: var(--shadow);
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .game-card::before,
+    .game-card::after {
+      content: "✦";
+      position: absolute;
+      z-index: -1;
+      color: rgba(255,120,167,.18);
+      pointer-events: none;
+    }
+    .game-card::before { top: 18px; left: 18px; font-size: 23px; }
+    .game-card::after { right: 19px; bottom: 17px; font-size: 29px; }
+
+    .screen { display: none; animation: screen-in .35s ease both; }
+    .screen.active { display: block; }
+
+    @keyframes screen-in {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--pink-deep);
+      font-size: 11px;
+      letter-spacing: .15em;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      color: var(--pink-deep);
+      font-size: clamp(25px, 6.5vw, 31px);
+      line-height: 1.15;
+      letter-spacing: -.035em;
+    }
+
+    h2 {
+      margin: 8px 0 10px;
+      font-size: 22px;
+      line-height: 1.25;
+      color: var(--pink-deep);
+    }
+
+    p { line-height: 1.6; }
+    .intro { margin: 0 auto 12px; max-width: 310px; font-size: 15px; }
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .heart-badge {
+      width: 112px;
+      height: 112px;
+      margin: 8px auto 17px;
+      display: grid;
+      place-items: center;
+      border-radius: 38% 62% 54% 46% / 45% 42% 58% 55%;
+      background: linear-gradient(145deg, #fff4f8, #ffd7e6);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.9), 0 12px 25px rgba(217,67,120,.12);
+      animation: floaty 3s ease-in-out infinite;
+    }
+
+    .heart-badge span {
+      font-size: 64px;
+      filter: drop-shadow(0 5px 3px rgba(173,49,95,.12));
+      animation: heartbeat 1.45s ease-in-out infinite;
+    }
+
+    @keyframes floaty { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
+    @keyframes heartbeat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.09); } 30% { transform: scale(1); } 45% { transform: scale(1.06); } }
+
+    .primary-btn,
+    .secondary-btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 17px;
+      padding: 13px 18px;
+      border: 0;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .primary-btn {
+      color: white;
+      background: linear-gradient(135deg, #ff8ab3, #e44b82);
+      box-shadow: 0 8px 17px rgba(217,67,120,.2), inset 0 1px 0 rgba(255,255,255,.35);
+    }
+    .primary-btn:active, .secondary-btn:active { transform: scale(.98); }
+    .primary-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .secondary-btn {
+      color: var(--pink-deep);
+      background: var(--pink-light);
+      border: 1px solid rgba(217,67,120,.12);
+    }
+
+    /* =====================================================
+       QUIZ STYLING
+       ===================================================== */
+    .quiz-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 2px 0 17px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 7px;
+      margin: 0 0 24px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #ffedf4;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ff9cbd, #d94378);
+      transition: width .3s ease;
+    }
+
+    #quiz-question {
+      min-height: 76px;
+      margin: 0 0 19px;
+      display: grid;
+      align-items: center;
+      font-size: 23px;
+      line-height: 1.28;
+      color: var(--pink-deep);
+    }
+
+    #quiz-options { display: flex; flex-direction: column; gap: 10px; }
+
+    .answer-btn {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-align: left;
+      color: var(--text);
+      background: #fff7fa;
+      border: 1.5px solid #f8d8e5;
+      border-radius: 16px;
+      cursor: pointer;
+      line-height: 1.35;
+      font-size: 14px;
+      transition: border-color .16s ease, background .16s ease, transform .16s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .answer-btn:active { transform: scale(.99); background: #ffeaf2; }
+    .answer-btn:disabled { cursor: default; opacity: .72; }
+    .option-letter {
+      flex: 0 0 27px;
+      height: 27px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      color: var(--pink-deep);
+      background: #ffe2ed;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .reaction-box {
+      display: none;
+      margin-top: 17px;
+      padding: 13px 14px;
+      border-radius: 16px;
+      color: #8d3659;
+      background: linear-gradient(135deg, #fff0f6, #fff8fb);
+      border: 1px solid #f9d5e3;
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: left;
+      animation: screen-in .2s ease both;
+    }
+    .reaction-box.show { display: block; }
+    .reaction-tag { display: block; margin-bottom: 4px; font-size: 10px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: var(--pink-deep); }
+    .quiz-next { margin-top: 14px; }
+
+    /* =====================================================
+       HEART GAME STYLING
+       ===================================================== */
+    .game-instructions { margin: -1px 0 14px; font-size: 13px; color: var(--muted); }
+
+    .heart-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .counter-pill {
+      padding: 9px 12px;
+      border: 1px solid #f8d8e5;
+      border-radius: 999px;
+      background: #fff7fa;
+      color: var(--pink-deep);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    #heart-field {
+      position: relative;
+      width: 100%;
+      height: 265px;
+      overflow: hidden;
+      border: 1px solid #f7d6e3;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 22% 28%, rgba(255,255,255,.98) 0 2px, transparent 3px),
+        radial-gradient(circle at 80% 65%, rgba(255,255,255,.95) 0 2px, transparent 3px),
+        linear-gradient(160deg, #fff7fb 0%, #ffe8f1 100%);
+      box-shadow: inset 0 0 20px rgba(217,67,120,.04);
+      touch-action: pan-y;
+    }
+    #heart-field::before {
+      content: "✦     ·       ✧        ·     ✦";
+      position: absolute;
+      top: 9px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(217,67,120,.27);
+      pointer-events: none;
+    }
+
+    .heart-target {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      font-size: 31px;
+      line-height: 1;
+      filter: drop-shadow(0 3px 2px rgba(174,49,95,.13));
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      will-change: left, top;
+    }
+    .heart-target:active { transform: scale(.82); }
+    .heart-target.collected { pointer-events: none; animation: pop-away .25s ease forwards; }
+
+    @keyframes pop-away {
+      0% { opacity: 1; transform: scale(1); }
+      65% { opacity: 1; transform: scale(1.35); }
+      100% { opacity: 0; transform: scale(.3) translateY(-12px); }
+    }
+
+    .game-hint {
+      min-height: 25px;
+      margin: 12px 0 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    /* =====================================================
+       ENDING STYLING
+       ===================================================== */
+    .ending-heart { font-size: 59px; margin: 12px 0; animation: heartbeat 1.5s ease-in-out infinite; }
+    .ending-message { max-width: 315px; margin: 0 auto 18px; font-size: 15px; }
+    .final-note {
+      margin: 20px 0 5px;
+      padding: 17px 15px;
+      border: 1px solid #f7d3e1;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #fff2f7, #fff9fc);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .tiny-footer { margin-top: 20px; color: #bd8ba0; font-size: 11px; }
+
+    .hidden { display: none !important; }
+
+    @media (max-height: 720px) {
+      body { align-items: flex-start; }
+      .game-card { min-height: auto; padding: 23px 19px; }
+      .heart-badge { width: 88px; height: 88px; margin-bottom: 13px; }
+      .heart-badge span { font-size: 52px; }
+      #heart-field { height: 235px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <div class="topbar">
+      <div class="brand">A tiny thing for you ♡</div>
+      <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="true">♫ Sound on</button>
+    </div>
+
+    <div class="game-card">
+      <!-- SCREEN 1: WELCOME -->
+      <section id="welcome" class="screen active">
+        <p class="eyebrow">Mini heart game for Paroo</p>
+        <div class="heart-badge" aria-hidden="true"><span>💗</span></div>
+        <h1 id="welcome-title">Hellooo, Patootie!</h1>
+        <p class="intro">A tiny little something has been made especially for you.</p>
+        <p class="muted">Made with love, nonsense, and too many heart emojis.</p>
+        <button id="start-button" class="primary-btn" type="button">Let's gooo 💕</button>
+        <p class="tiny-footer">For my favourite little human.</p>
+      </section>
+
+      <!-- SCREEN 2: QUIZ -->
+      <section id="quiz" class="screen" aria-live="polite">
+        <div class="quiz-topline">
+          <span>A LITTLE MEMORY & FUN QUIZ</span>
+          <span id="quiz-progress">Question 1 of 10 💗</span>
+        </div>
+        <div class="progress-track" aria-hidden="true"><div id="quiz-progress-fill" class="progress-fill"></div></div>
+        <p class="eyebrow">Please answer with dignity</p>
+        <h2 id="quiz-question"></h2>
+        <div id="quiz-options"></div>
+        <div id="quiz-reaction" class="reaction-box" aria-live="polite">
+          <span id="reaction-tag" class="reaction-tag">THE JURY HAS RESPONDED</span>
+          <span id="reaction-text"></span>
+        </div>
+        <button id="quiz-next" class="primary-btn quiz-next hidden" type="button">Next question 💗</button>
+      </section>
+
+      <!-- SCREEN 3: HEART-CATCHING GAME -->
+      <section id="hearts" class="screen">
+        <p class="eyebrow">A tiny challenge for my litchie</p>
+        <h1>Catch my hearts!</h1>
+        <p class="game-instructions">Tap every heart. If one escapes, it'll loop around and come back for you. 💞</p>
+        <div class="heart-hud">
+          <span id="heart-counter" class="counter-pill">♡ 0 / 8 caught</span>
+          <span class="counter-pill">No rush, cutie</span>
+        </div>
+        <div id="heart-field" aria-label="Tap the moving hearts to collect them"></div>
+        <p id="heart-hint" class="game-hint" aria-live="polite">Some are sneaky. Some are speedy. All are yours. 💗</p>
+      </section>
+
+      <!-- SCREEN 4: PUNCHLINE, THEN THE LITTLE NOTE -->
+      <section id="ending" class="screen">
+        <p class="eyebrow">Official certificate of heart collection</p>
+        <div class="ending-heart" aria-hidden="true">💝</div>
+        <h1 id="ending-title">Congratulations!</h1>
+        <p id="ending-punchline" class="ending-message">You collected all the hearts. Unfortunately, they're all yours already...</p>
+        <button id="reveal-note-button" class="primary-btn" type="button">Wait, one more thing 💗</button>
+        <div id="final-note-wrap" class="hidden">
+          <div id="final-note" class="final-note">I love you, my little Patootie. Even when you're angry, even when you're being Dumbo, and especially when you're being my Buggu. 💗</div>
+          <p class="muted">Unlimited forehead kisses and head pats included.</p>
+          <button id="replay-button" class="secondary-btn" type="button">Play again? 🌸</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    /* =====================================================
+       PERSONAL DETAILS — EDIT THESE WORDS TO SOUND LIKE YOU
+       ===================================================== */
+    const PERSONAL = {
+      herName: "Gaggu",
+      greetingName: "Kuchupuchu",
+      finalMessage: "I love you Paroo! Even when you're angry, even when you're being a dumbo, and especially when you're being my pyara sa Buggu. 💗",
+      finalExtra: "Unlimited forehead kisses and head pats included!"
+    };
+
+    /* =====================================================
+       QUIZ QUESTIONS — FULLY EDITABLE
+       - Change question to rewrite the question.
+       - Change text to rewrite an answer button.
+       - Change response to rewrite what appears after a tap.
+       - retry: true means she can choose again before moving on.
+       ===================================================== */
+    const QUESTIONS = [
+      {
+        question: "What does Gaggu like to do mostly?",
+        options: [
+          { text: "Be comfy and scroll reels", response: "Valid. My little Buggu deserves all the cosiness in the world. 🥹" },
+          { text: "Eat loads of junk and sweets", response: "Of course nothing is too spicy or sweet! 🌶️🍬" },
+          { text: "Stay gussa from Ansh, because why not", response: "Especially when I don't appear for a few hours (im sorrieee). 😭💕" }
+        ]
+      },
+      {
+        question: "What happens when Patootie gets angry?",
+        options: [
+          { text: "The entire universe trembles", response: "The universe? Maybe. Me? I'm busy finding you adorable, mukku." },
+          { text: "A tiny angry potato walks away in RAGE", response: "THAT WALK. THE LITTLE SHOULDERS. THE COLLEGE BAG. I CAN'T HELP BUT CRY. 😭" },
+          { text: "She has to declare 'I need nobody to keep me happy'", response: "Sorry Ms. Independent, but that's not gonna happen." }
+        ]
+      },
+      {
+        question: "What is the scientific explanation for our telepathy?",
+        options: [
+          { text: "Pure coincidence", response: "COINCIDENCE?! After everything we've done at the exact same time? Try again, madam. 😤", retry: true },
+          { text: "Advanced quantum entanglement", response: "FINALLY. A scientifically respectable answer. Maybe we should collab." },
+          { text: "Two shared brain cells taking turns", response: "One for you, one for me. And somehow our potty timings match. 💀" }
+        ]
+      },
+      {
+        question: "What is Inertia?",
+        options: [
+          { text: "Idk I am dumb", response: "GAGGU. PLEASE. I'm trying to teach you physics. Try again. 😭", retry: true },
+          { text: "Equilibrium of motion 😤", response: "Absolutely correct! YAWRRR you so smart" },
+          { text: "'Tumhe kya mai toh tumse zyada smart hoon' ", response: "Bruh, okay that's rude. Par chalo accept kiya." }
+        ]
+      },
+      {
+        question: "What did our litchi-drink adventures teach us?",
+        options: [
+          { text: "Litchi drinks are superior", response: "A woman of culture. My pet litchie has spoken. 🍒💕" },
+          { text: "Everyday hanging outside tuition together is SWEET", response: "Okay, that was unexpectedly wholesome. Come here, you. ❤️" },
+          { text: "We should move on to alcohol perhaps", response: "AGREED. Talli ho jate hai chalo" }
+        ]
+      },
+      {
+        question: "Remember when we took Somu on a date?",
+        options: [
+          { text: "Such a cutiepie but tough to handle", response: "Parenthood for an afternoon. 😭" },
+          { text: "Somu was the main character and we were his assistants", response: "Agent somu peakkk" },
+          { text: "We basically became parents for a day", response: "Yeah you wanted to hold my hand but our shararti kid-" }
+        ]
+      },
+      {
+        question: "How beautiful is my Patootie, scientifically speaking?",
+        options: [
+          { text: "Very pretty", response: "VERY PRETTY?! That's your final answer? Gaggu, please be serious. 😤", retry: true },
+          { text: "The most stereotypically beautiful woman in the universe", response: "There is no match or any competetion for you, TRY AGAIN!", retry: true },
+          { text: "Beauty standards were invented to describe HER", response: "Omfg yessss! You are such a sexy goddess!" }
+        ]
+      },
+      {
+        question: "A very serious question: who is the chubbier one?",
+        options: [
+          { text: "Obviously me", response: "Nice attempt at diplomacy, but try again", retry: true },
+          { text: "Obviously you", response: "EXCUSE ME?! Sirf mai mota hoon?? 😤", retry: true },
+          { text: "We are both adorable and the case is closed", response: "Yes we are a MOTU COUPLE" }
+        ]
+      },
+      {
+        question: "What do I secretly think about our late-night talks?",
+        options: [
+          { text: "That we should have gone home earlier", response: "Home earlier? And miss all that talking? What a terrible suggestion.", retry: true },
+          { text: "That I could talk to you for hours and still want more", response: "Okay, fine. Ab rulao mat 🥹❤️" },
+          { text: "Tuitions were only a bahana to meet", response: "SUSPICIOUSLY ACCURATE. Chemistry was so boring but you weren't." }
+        ]
+      },
+      {
+        question: "What does your boyfriend think you deserve?",
+        options: [
+          { text: "A little bit of love", response: "A LITTLE BIT?! Gaggu, have you met me? Think bigger. 😭", retry: true },
+          { text: "All the love in the world", response: "Better. But even the universe has a limited budget, unfortunately. 💗" },
+          { text: "All the love in the world, plus unlimited forehead kisses and head pats", response: "THERE IT IS. THE CORRECT ANSWER. SOMEONE GET THIS WOMAN HER PRIZES. 🥹💕" }
+        ]
+      }
+    ];
+
+    /* =====================================================
+       HEART GAME SETTINGS — EASY TO TUNE
+       Change HEART_COUNT or speeds if it feels too easy/hard.
+       Each heart loops around if it reaches the right edge.
+       ===================================================== */
+    const HEART_COUNT = 21;
+    // Movement speed in pixels per second, from slow to speedy.
+    const HEART_SPEEDS = [24, 29, 35, 42, 49, 58, 66, 74];
+    const HEART_EMOJIS = ["💗", "💖", "💘", "💕", "💓", "💝", "❤️", "💞"];
+
+    /* =====================================================
+       GAME STATE — NO NEED TO CHANGE FOR NORMAL PERSONALISING
+       ===================================================== */
+    let currentQuestionIndex = 0;
+    let acceptedAnswer = false;
+    let soundEnabled = true;
+    let audioContext = null;
+    let heartTargets = [];
+    let animationFrameId = null;
+    let lastFrameTime = 0;
+    let gameRunning = false;
+    let heartsCaught = 0;
+
+    const $ = (id) => document.getElementById(id);
+
+    // Update visible name/message copy from the personalisation section.
+    function applyPersonalDetails() {
+      document.title = `For My ${PERSONAL.herName} 💗`;
+      $("welcome-title").textContent = `Hellooo, ${PERSONAL.greetingName}!`;
+      $("final-note").textContent = PERSONAL.finalMessage;
+      $("final-note-wrap").querySelector(".muted").textContent = PERSONAL.finalExtra;
+    }
+
+    // Play a tiny sound generated in the browser — no audio files required.
+    function playTone(frequency = 660, duration = 0.08, type = "sine", volume = 0.035) {
+      if (!soundEnabled) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioContext) audioContext = new AudioContextClass();
+        if (audioContext.state === "suspended") audioContext.resume();
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        gain.gain.setValueAtTime(volume, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (_) {
+        // Audio is optional; the game still works if the browser blocks it.
+      }
+    }
+
+    function playTapSound() { playTone(540, 0.055, "sine", 0.025); }
+    function playHeartSound() {
+      playTone(740, 0.09, "sine", 0.04);
+      window.setTimeout(() => playTone(990, 0.11, "sine", 0.03), 55);
+    }
+
+    $("sound-toggle").addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      $("sound-toggle").textContent = soundEnabled ? "♫ Sound on" : "♫ Sound off";
+      $("sound-toggle").setAttribute("aria-pressed", String(soundEnabled));
+      if (soundEnabled) playTapSound();
+    });
+
+    // Show one screen and hide the others.
+    function showScreen(screenId) {
+      if (screenId !== "hearts") stopHeartGame();
+      document.querySelectorAll(".screen").forEach((screen) => screen.classList.remove("active"));
+      $(screenId).classList.add("active");
+
+      if (screenId === "quiz") {
+        currentQuestionIndex = 0;
+        renderQuestion();
+      }
+      if (screenId === "hearts") startHeartGame();
+      if (screenId === "ending") {
+        $("final-note-wrap").classList.add("hidden");
+        $("reveal-note-button").classList.remove("hidden");
+      }
+    }
+
+    $("start-button").addEventListener("click", () => {
+      playTapSound();
+      showScreen("quiz");
+    });
+
+    // Draw the current question and answer buttons.
+    function renderQuestion() {
+      const question = QUESTIONS[currentQuestionIndex];
+      acceptedAnswer = false;
+      $("quiz-progress").textContent = `Question ${currentQuestionIndex + 1} of ${QUESTIONS.length} 💗`;
+      $("quiz-progress-fill").style.width = `${((currentQuestionIndex + 1) / QUESTIONS.length) * 100}%`;
+      $("quiz-question").textContent = question.question;
+      $("quiz-reaction").classList.remove("show");
+      $("reaction-text").textContent = "";
+      $("reaction-tag").textContent = "THE JURY HAS RESPONDED";
+      $("quiz-next").classList.add("hidden");
+      $("quiz-next").textContent = currentQuestionIndex === QUESTIONS.length - 1 ? "Catch my hearts! 💕" : "Next question 💗";
+
+      const optionsContainer = $("quiz-options");
+      optionsContainer.innerHTML = "";
+      question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "answer-btn";
+        button.innerHTML = `<span class="option-letter">${String.fromCharCode(65 + index)}</span><span></span>`;
+        button.querySelector("span:last-child").textContent = option.text;
+        button.addEventListener("click", () => chooseAnswer(index));
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    // Show the response for her selection. Retry answers keep the options active.
+    function chooseAnswer(optionIndex) {
+      if (acceptedAnswer) return;
+      const question = QUESTIONS[currentQuestionIndex];
+      const option = question.options[optionIndex];
+      playTapSound();
+      $("reaction-text").textContent = option.response;
+      $("reaction-tag").textContent = option.retry ? "EXCUSE ME, MADAM 😤" : "THE JURY HAS RESPONDED 💌";
+      $("quiz-reaction").classList.add("show");
+
+      if (option.retry) {
+        $("quiz-next").classList.add("hidden");
+        // Leave the options available so she can immediately choose again.
+        return;
+      }
+
+      acceptedAnswer = true;
+      Array.from($("quiz-options").querySelectorAll("button")).forEach((button) => { button.disabled = true; });
+      $("quiz-next").textContent = currentQuestionIndex === QUESTIONS.length - 1 ? "Catch my hearts! 💕" : "Next question 💗";
+      $("quiz-next").classList.remove("hidden");
+    }
+
+    $("quiz-next").addEventListener("click", () => {
+      if (!acceptedAnswer) return;
+      playTapSound();
+      if (currentQuestionIndex < QUESTIONS.length - 1) {
+        currentQuestionIndex += 1;
+        renderQuestion();
+      } else {
+        showScreen("hearts");
+      }
+    });
+
+    // Make sure the playfield has the right number of hearts even after resizing.
+    function startHeartGame() {
+      stopHeartGame();
+      const field = $("heart-field");
+      field.innerHTML = "";
+      heartTargets = [];
+      heartsCaught = 0;
+      updateHeartCounter();
+      $("heart-hint").textContent = "Some are sneaky. Some are speedy. All are yours. 💗";
+
+      const fieldWidth = field.clientWidth;
+      const fieldHeight = field.clientHeight;
+      const targetSize = 48;
+      // Four comfortable lanes, with two hearts starting in each lane.
+      // This avoids stacking all eight tap targets on top of one another.
+      const laneCount = Math.ceil(HEART_COUNT / 2);
+      const laneGap = (fieldHeight - targetSize - 20) / Math.max(laneCount - 1, 1);
+
+      for (let i = 0; i < HEART_COUNT; i += 1) {
+        const heart = document.createElement("button");
+        heart.type = "button";
+        heart.className = "heart-target";
+        heart.textContent = HEART_EMOJIS[i % HEART_EMOJIS.length];
+        heart.setAttribute("aria-label", `Catch heart ${i + 1}`);
+        const lane = i % laneCount;
+        const startingColumn = Math.floor(i / laneCount);
+        const x = startingColumn === 0
+          ? 8
+          : Math.max(8, fieldWidth * 0.52);
+        const y = 10 + lane * laneGap;
+        const target = {
+          element: heart,
+          x,
+          y,
+          speed: HEART_SPEEDS[i % HEART_SPEEDS.length],
+          size: targetSize,
+          collected: false,
+          id: i
+        };
+        positionHeart(target);
+        heart.addEventListener("click", () => collectHeart(target));
+        field.appendChild(heart);
+        heartTargets.push(target);
+      }
+
+      gameRunning = true;
+      lastFrameTime = 0;
+      animationFrameId = window.requestAnimationFrame(animateHearts);
+    }
+
+    function positionHeart(target) {
+      target.element.style.left = `${target.x}px`;
+      target.element.style.top = `${target.y}px`;
+    }
+
+    function animateHearts(timestamp) {
+      if (!gameRunning) return;
+      if (!lastFrameTime) lastFrameTime = timestamp;
+      const deltaSeconds = Math.min((timestamp - lastFrameTime) / 1000, 0.05);
+      lastFrameTime = timestamp;
+      const fieldWidth = $("heart-field").clientWidth;
+
+      heartTargets.forEach((target) => {
+        if (target.collected) return;
+        target.x += target.speed * deltaSeconds;
+        // A missed heart wraps around to the left and keeps trying until caught.
+        if (target.x > fieldWidth - target.size + 2) {
+          target.x = -target.size + 2;
+        }
+        positionHeart(target);
+      });
+      animationFrameId = window.requestAnimationFrame(animateHearts);
+    }
+
+    function collectHeart(target) {
+      if (target.collected || !gameRunning) return;
+      target.collected = true;
+      target.element.classList.add("collected");
+      target.element.disabled = true;
+      heartsCaught += 1;
+      playHeartSound();
+      updateHeartCounter();
+
+      const littleMessages = [
+        "One more for the world's cutest menace. 💗",
+        "Caught! Your heart-catching skills are suspiciously good. ✨",
+        "That one was absolutely yours already. 💕",
+        "A heart for my favourite little human. 🥹"
+      ];
+      $("heart-hint").textContent = littleMessages[(heartsCaught - 1) % littleMessages.length];
+
+      if (heartsCaught === HEART_COUNT) {
+        gameRunning = false;
+        if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+        $("heart-hint").textContent = "Every last one. Of course you caught them. 💖";
+        window.setTimeout(() => showScreen("ending"), 650);
+      }
+    }
+
+    function updateHeartCounter() {
+      $("heart-counter").textContent = `♡ ${heartsCaught} / ${HEART_COUNT} caught`;
+    }
+
+    function stopHeartGame() {
+      gameRunning = false;
+      if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+      lastFrameTime = 0;
+    }
+
+    // The punchline appears first; the private little note is revealed after a tap.
+    $("reveal-note-button").addEventListener("click", () => {
+      playTapSound();
+      $("reveal-note-button").classList.add("hidden");
+      $("final-note-wrap").classList.remove("hidden");
+    });
+
+    // Replay starts the experience from the beginning.
+    $("replay-button").addEventListener("click", () => {
+      playTapSound();
+      showScreen("welcome");
+    });
+
+    // If a phone rotates or the browser window changes size, keep hearts in bounds.
+    window.addEventListener("resize", () => {
+      if (!gameRunning) return;
+      const fieldWidth = $("heart-field").clientWidth;
+      const fieldHeight = $("heart-field").clientHeight;
+      heartTargets.forEach((target) => {
+        if (target.collected) return;
+        target.x = Math.min(target.x, fieldWidth - target.size);
+        target.y = Math.min(target.y, fieldHeight - target.size);
+        positionHeart(target);
+      });
+    });
+
+    applyPersonalDetails();
+  </script>
+</body>
+</html>
